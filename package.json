@@ -17,12 +17,16 @@
     "@trpc/server": "^11.17.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "pg": "^8.20.0",
+    "sequelize": "^6.37.8",
+    "umzug": "^3.8.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.2",
+    "@types/sequelize": "^4.28.20",
     "eslint": "^10.3.0",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",

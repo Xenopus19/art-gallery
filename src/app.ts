@@ -6,7 +6,7 @@ import { createContext } from './utils/trpc.ts';
 const app = express();
 
 app.use(
-  '/api',
+  '/trpc',
   trpcExpress.createExpressMiddleware({
     router: appRouter,
     createContext,
