@@ -1,16 +1,16 @@
 import { TRPCError } from "@trpc/server";
 import User from "../models/User.ts";
 import { router, publicProcedure } from "../utils/trpc.ts";
-import { z } from "zod";
+import { uuidv4, z } from "zod";
 import createUserSchema from "../schemas/createUser.ts";
 import bcrypt from "bcrypt";
+import { getUploadUrl } from "../utils/s3.ts";
 
 const userRouter = router({
   getUserById: publicProcedure
     .input(
       z.object({
-        id: z.string()
-        ,
+        id: z.string(),
       }),
     )
     .query(async ({ input }) => {
@@ -25,20 +25,34 @@ const userRouter = router({
       return user;
     }),
 
-    getAllUsers: publicProcedure.query(async () => {
-      return await User.findAll();
-    }),
+  getAllUsers: publicProcedure.query(async () => {
+    return await User.findAll();
+  }),
 
-    createUser: publicProcedure.input(createUserSchema).mutation(async ({input}) => {
+  createUser: publicProcedure
+    .input(createUserSchema)
+    .mutation(async ({ input }) => {
       const hashedPassword: string = await bcrypt.hash(input.password, 10);
       const { password: _, ...userData } = input;
-      const newUser = await User.create({...userData, passwordHash: hashedPassword})
+      const newUser = await User.create({
+        ...userData,
+        passwordHash: hashedPassword,
+      });
       return newUser;
     }),
 
-    //changeUserDescription: publicProcedure.input(createUserSchema.pick({ description: true })).mutation(async () => {
-      
-    //})
+  getImageUploadUrl: publicProcedure.input(z.object({
+    fileName: z.string().max(200),
+    fileType: z.string().max(200)
+  })).mutation(async ({input}) => {
+    const uniqueKey = `${uuidv4()}-${input.fileName.replace(/\s+/g, '_')}`;
+    const url = await getUploadUrl(uniqueKey, input.fileType);
+    return {url, key: uniqueKey}
+  }),
+
+  //changeUserDescription: publicProcedure.input(createUserSchema.pick({ description: true })).mutation(async () => {
+
+  //})
 });
 
 export default userRouter;
