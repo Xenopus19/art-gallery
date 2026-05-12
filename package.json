@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.ts",
+    "dev:server": "nodemon index.ts",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "lint": "eslint . --ext .ts"
   },
   "keywords": [],
@@ -31,6 +33,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.2",
     "@types/sequelize": "^4.28.20",
+    "concurrently": "^9.2.1",
     "eslint": "^10.3.0",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
