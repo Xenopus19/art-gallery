@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import User from "../models/User.ts";
 import { router, publicProcedure } from "../utils/trpc.ts";
-import { uuidv4, z } from "zod";
+import { z } from "zod";
+import { v4 as uuidv4 } from "uuid";
 import createUserSchema from "../schemas/createUser.ts";
 import bcrypt from "bcrypt";
 import { getUploadUrl } from "../utils/s3.ts";
@@ -47,6 +48,8 @@ const userRouter = router({
   })).mutation(async ({input}) => {
     const uniqueKey = `${uuidv4()}-${input.fileName.replace(/\s+/g, '_')}`;
     const url = await getUploadUrl(uniqueKey, input.fileType);
+    console.log(url)
+    console.log(uniqueKey)
     return {url, key: uniqueKey}
   }),
 

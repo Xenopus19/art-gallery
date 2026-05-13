@@ -4,7 +4,7 @@ import { CLOUDFLARE_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY } from ".
 
 const s3 = new S3Client({
   region: "auto",
-  endpoint: `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  endpoint: `${CLOUDFLARE_ACCOUNT_ID}`,
   credentials: {
     accessKeyId: R2_ACCESS_KEY_ID,
     secretAccessKey: R2_SECRET_ACCESS_KEY,
@@ -13,7 +13,7 @@ const s3 = new S3Client({
 
 export const getUploadUrl = async (fileName: string, fileType: string) => {
   const command = new PutObjectCommand({
-    Bucket: "my-bucket-name",
+    Bucket: "art-gallery",
     Key: fileName,
     ContentType: fileType,
   });
