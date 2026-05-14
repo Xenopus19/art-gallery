@@ -31,7 +31,7 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
       <form className="flex flex-col gap-5" onSubmit={form.handleSubmit(submit)}>
         <Field>
           <FieldLabel>Username</FieldLabel>
-          <Input {...form.register("username")} />
+          <Input autoComplete='username' {...form.register("username")} />
           <FieldDescription>Public username.</FieldDescription>
           {form.formState.errors.username && (
             <FieldError>{form.formState.errors.username.message}</FieldError>
@@ -40,7 +40,7 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
 
         <Field>
           <FieldLabel>Password</FieldLabel>
-          <Input type="password" {...form.register("password")} />
+          <Input autoComplete='current-password' type="password" {...form.register("password")} />
           <FieldDescription>Your password.</FieldDescription>
           {form.formState.errors.password && (
             <FieldError>{form.formState.errors.password.message}</FieldError>
