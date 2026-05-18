@@ -3,21 +3,17 @@ import type {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-  NonAttribute,
 } from "sequelize";
 import { sequelize } from "../utils/db.ts";
-import type { User } from "./index.ts";
 
-class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
+class Comment extends Model<InferAttributes<Comment>, InferCreationAttributes<Comment>> {
   declare id: CreationOptional<string>;
-  declare description: string;
-  declare title: string;
+  declare text: string;
   declare userId: string;
-  declare imageUrl: string;
-  declare author?: NonAttribute<User>;
-  declare likesCount?: NonAttribute<number>;
+  declare postId: string;
+  declare created_at: CreationOptional<Date>;
 }
-Post.init(
+Comment.init(
   {
     id: {
       type: DataTypes.UUID,
@@ -25,16 +21,20 @@ Post.init(
       primaryKey: true,
       allowNull: false,
     },
-    description: {
+    text: {
       type: DataTypes.TEXT,
       allowNull: false,
       unique: false,
-      defaultValue: "",
     },
-    title: {
-      type: DataTypes.TEXT,
+    postId: {
+      type: DataTypes.UUID,
       allowNull: false,
-      unique: false,
+      references: {
+        model: "posts", 
+        key: "id",
+      },
+      onUpdate: "CASCADE", 
+      onDelete: "CASCADE", 
     },
     userId: {
       type: DataTypes.UUID,
@@ -46,21 +46,19 @@ Post.init(
       onUpdate: "CASCADE", 
       onDelete: "CASCADE", 
     },
-    imageUrl: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-      unique: false,
-    },
+    created_at: {
+        type: DataTypes.DATE,
+    }
   },
   {
     sequelize,
     underscored: true,
-    modelName: "posts",
-    timestamps: false,
+    modelName: "comments",
+    timestamps: true,
   },
 );
 
-export type PostType = InferAttributes<Post>;
-export type NewPostType = InferCreationAttributes<Post>;
+export type CommentType = InferAttributes<Comment>;
+export type NewCommentType = InferCreationAttributes<Comment>;
 
-export default Post;
+export default Comment;
