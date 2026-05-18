@@ -5,7 +5,7 @@ import useLogin from "../../hooks/useLogin";
 
 const Login = () => {
   const navigate = useNavigate();
-  const login = useLogin()
+  const {login} = useLogin()
 
   const handleLogin = async (data: LoginInfoType) => {
     try {

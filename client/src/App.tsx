@@ -4,12 +4,14 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import MainPage from "./components/MainPage";
 import SignUp from "./components/SignUp";
-import { httpBatchLink } from "@trpc/client";
 import { useState}  from "react";
-import { trpc } from "./trpc";
+import { trpc, trpcClient } from "./trpc";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TooltipProvider } from "./components/ui/tooltip";
 import Login from "./components/Login";
+import { Provider } from 'react-redux';
+import { store } from "./store";
+import UserProfile from "./components/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -27,22 +29,19 @@ const router = createBrowserRouter([
         path: "/login",
         element: <Login />,
       },
+      {
+        path: `/profile/:id`,
+        element: <UserProfile />,
+      },
     ],
   },
 ]);
 
 function App() {
   const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: 'http://localhost:3001/trpc', 
-        }),
-      ],
-    }),
-  );
+
   return (
+    <Provider store={store}>
     <TooltipProvider>
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
@@ -50,6 +49,7 @@ function App() {
       </QueryClientProvider>
     </trpc.Provider>
     </TooltipProvider>
+    </Provider>
   );
 }
 

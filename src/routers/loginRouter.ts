@@ -7,6 +7,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../utils/config.ts";
 
+export interface TokenUser { 
+  username: string,
+  id: string
+}
+
 const loginRouter = router({
   login: publicProcedure.input(z.object({
     username: createUserSchema.shape.username,
@@ -37,7 +42,7 @@ const loginRouter = router({
         });
       }
 
-      const tokenUser = {
+      const tokenUser: TokenUser = {
         id: user.id,
         username: user.username,
       };

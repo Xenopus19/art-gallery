@@ -7,14 +7,15 @@ export interface TooltipLinkProps {
   text: string;
   url: string;
   icon: LucideIcon;
+  onClick? : () => void
 }
 
-const TooltipLinkIcon = ({ text, icon: Icon, url }: TooltipLinkProps) => {
+const TooltipLinkIcon = ({ text, icon: Icon, url, onClick}: TooltipLinkProps) => {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <Link to={url}>
-          <Button variant="outline" size="icon">
+          <Button onClick={onClick} variant="outline" size="icon">
             <Icon className="h-4 w-4" />
           </Button>
         </Link>

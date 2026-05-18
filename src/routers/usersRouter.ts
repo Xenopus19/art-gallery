@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import User from "../models/User.ts";
-import { router, publicProcedure } from "../utils/trpc.ts";
+import { router, publicProcedure, protectedProcedure } from "../utils/trpc.ts";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import createUserSchema from "../schemas/createUser.ts";
@@ -23,7 +23,7 @@ const userRouter = router({
           message: `User with ID ${input.id} not found`,
         });
       }
-      return user;
+      return user.get({plain:true});
     }),
 
   getAllUsers: publicProcedure.query(async () => {
@@ -53,6 +53,9 @@ const userRouter = router({
     return {url, key: uniqueKey}
   }),
 
+  me: protectedProcedure.query(async ({ctx}) => {
+    return ctx.user
+  })
   //changeUserDescription: publicProcedure.input(createUserSchema.pick({ description: true })).mutation(async () => {
 
   //})
