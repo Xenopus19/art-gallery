@@ -15,17 +15,17 @@ const useLogin = () => {
 
     const userData = await utils.users.me.fetch();
 
-    dispatch(setUser(userData))
-    
-    return result
+    dispatch(setUser(userData));
+
+    return result;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    dispatch(resetUser())
-  }
+    localStorage.removeItem("token");
+    dispatch(resetUser());
+  };
 
-  return {login, logout}
+  return { login, logout };
 };
 
 export default useLogin;

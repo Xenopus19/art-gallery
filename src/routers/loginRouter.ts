@@ -53,10 +53,19 @@ const loginRouter = router({
         token,
       };
     } catch (error) {
-      throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: `An error occured`,
+      if(error instanceof TRPCError)
+      {
+        throw new TRPCError({
+          code: error.code,
+          message: error.message,
         });
+      }
+      else{
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occured",
+        });
+      }
     }
   }),
 });
