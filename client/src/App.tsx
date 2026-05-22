@@ -12,6 +12,7 @@ import Login from "./components/Login";
 import { Provider } from 'react-redux';
 import { store } from "./store";
 import UserProfile from "./components/UserProfile";
+import PostPage from "./components/PostPage";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: `/profile/:id`,
         element: <UserProfile />,
+      },
+      {
+        path: `/post/:id`,
+        element: <PostPage />,
       },
     ],
   },

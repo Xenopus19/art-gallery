@@ -1,10 +1,5 @@
-import type { inferRouterOutputs } from "@trpc/server";
-import type { PostType } from "../../../src/models/Post";
-import UserCard from "./UserCard";
-import type { AppRouter } from "../../../src/router";
-import { Heart } from "lucide-react";
-
-type RouterOutput = inferRouterOutputs<AppRouter>;
+import { Link } from "react-router-dom";
+import type { RouterOutput } from "../trpc";
 
 type PostWithAuthorType = RouterOutput["posts"]["getPostsByUserId"][number];
 
@@ -14,17 +9,16 @@ interface PostCardProps {
 
 const PostCard = ({ post }: PostCardProps) => {
   return (
-    <div className=" shadow-xl p-4 rounded-2xl flex flex-row justify-between items-center">
-      <div>
-        <p className="font-bold">{post.title} by {post.author? post.author.username : "user" }</p>
-        <p>{post.description}</p>
-        <div className="flex flex-row">
-          <Heart />
-          <p>: {post.likesCount}</p>
+    <Link to={`/post/${post.id}`}>
+      <div className="max-w-52 shadow-xl p-2 rounded-2xl flex flex-col justify-between items-center">
+        <img className="mb-2 rounded-2xl" src={post.imageUrl} />
+        <div className="max-w-2/3 px-1 text-center">
+          <p className="font-bold wrap-break-word">
+            {post.title} by {post.author ? post.author.username : "user"}
+          </p>
         </div>
       </div>
-      <img src={post.imageUrl} />
-    </div>
+    </Link>
   );
 };
 

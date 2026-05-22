@@ -1,3 +1,4 @@
+import likeRouter from './routers/likeRouter.ts';
 import loginRouter from './routers/loginRouter.ts';
 import postsRouter from './routers/postsRouter.ts';
 import userRouter from './routers/usersRouter.ts';
@@ -9,7 +10,8 @@ export const appRouter = router({
   }),
   users: userRouter,
   login: loginRouter,
-  posts: postsRouter
+  posts: postsRouter,
+  like: likeRouter
 });
 
 export type AppRouter = typeof appRouter;

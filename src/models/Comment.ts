@@ -11,7 +11,7 @@ class Comment extends Model<InferAttributes<Comment>, InferCreationAttributes<Co
   declare text: string;
   declare userId: string;
   declare postId: string;
-  declare created_at: CreationOptional<Date>;
+  declare createdAt: CreationOptional<Date>;
 }
 Comment.init(
   {
@@ -46,7 +46,7 @@ Comment.init(
       onUpdate: "CASCADE", 
       onDelete: "CASCADE", 
     },
-    created_at: {
+    createdAt: {
         type: DataTypes.DATE,
     }
   },

@@ -7,6 +7,7 @@ import type {
 } from "sequelize";
 import { sequelize } from "../utils/db.ts";
 import type { User } from "./index.ts";
+import type { CommentType } from "./Comment.ts";
 
 class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
   declare id: CreationOptional<string>;
@@ -16,6 +17,7 @@ class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
   declare imageUrl: string;
   declare author?: NonAttribute<User>;
   declare likesCount?: NonAttribute<number>;
+  declare comments?: NonAttribute<CommentType[]>;
 }
 Post.init(
   {

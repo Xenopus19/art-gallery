@@ -1,0 +1,68 @@
+import { trpc } from "../trpc";
+import { useParams } from "react-router-dom";
+import UserCard from "./UserCard";
+import Comment from "./Comment";
+import LikeButton from "./LikeButton";
+import { useAppSelector } from "../store/hooks";
+
+const PostPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const currentUser = useAppSelector((state) => state.user);
+  const postQuery = trpc.posts.getPostById.useQuery(
+    { postId: id as string },
+    { enabled: !!id },
+  );
+  const hasLiked = trpc.like.hasLiked.useQuery(
+    { postId: id as string },
+    { enabled: !!id && !!currentUser },
+  );
+  const likeMutation = trpc.like.toggleLike.useMutation();
+
+  if (!postQuery.isSuccess) {
+    return <p>Loading...</p>;
+  }
+
+  const likePost = async () => {
+    if(id)
+    {
+      await likeMutation.mutateAsync({postId: id})
+      hasLiked.refetch();
+      postQuery.refetch();
+    }
+  };
+
+  const post = postQuery.data;
+  const author = post.author
+    ? post.author
+    : { username: "user", avatarUrl: "https://picsum.photos/200", id: "" };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div>
+        <div className=" shadow-xl p-4 rounded-2xl flex flex-row justify-between items-center">
+          <img src={post.imageUrl} />
+          <div>
+            <UserCard
+              username={author.username}
+              avatarUrl={author.avatarUrl}
+              userId={author.id}
+            >
+              <p className="font-bold">{post.title}</p>
+              <p className="font-light">{post.description}</p>
+              <div className="flex flex-col items-center gap-2">
+                <p className="font-light">Likes: {post.likesCount}</p>
+                {currentUser.data && (
+                  <LikeButton onSubmit={likePost} hasLiked={hasLiked.data? hasLiked.data : false } />
+                )}
+              </div>
+            </UserCard>
+          </div>
+        </div>
+      </div>
+      {post.comments &&
+        post.comments.map((c) => <Comment key={c.id} comment={c} />)}
+    </div>
+  );
+};
+
+export default PostPage;

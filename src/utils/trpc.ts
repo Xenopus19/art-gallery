@@ -3,6 +3,8 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import type { TokenUser } from '../routers/loginRouter.ts';
 import { JWT_SECRET } from './config.ts';
 import jwt from 'jsonwebtoken'
+import z from 'zod';
+import Like from '../models/Like.ts';
 
 export const createContext = ({
   req,
@@ -41,7 +43,19 @@ const isAuthed = t.middleware(({ next, ctx }) => {
     },
   });
 });
+
+export const protectedProcedure = t.procedure.use(isAuthed);
+
+export const hasLikedProcedure = protectedProcedure.input(z.object({ postId: z.string() })) 
+  .use(async ({ ctx, input, next }) => {
+    const like = await Like.findOne({where: {postId: input.postId, userId: ctx.user.id}})
+
+    return next({
+      ctx: {
+        hasLiked: !!like, 
+      },
+    });
+  });
  
 export const publicProcedure = t.procedure;
 export const router = t.router;
-export const protectedProcedure = t.procedure.use(isAuthed);

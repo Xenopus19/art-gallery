@@ -1,11 +1,20 @@
-import z from "zod";
+import z, { includes } from "zod";
 import { publicProcedure, router } from "../utils/trpc.ts";
-import Post from "../models/Post.ts";
-import { Like, User } from "../models/index.ts";
-import type { UserType } from "../models/User.ts";
+import Post, { type PostType } from "../models/Post.ts";
+import { Comment, Like, User } from "../models/index.ts";
 import { sequelize } from "../utils/db.ts";
+import { TRPCError } from "@trpc/server";
+import type { CommentType } from "../models/Comment.ts";
 
-type PostWithAuthor = Post & { author: UserType };
+type CommentWithAuthor = CommentType & {
+  author?: Pick<User, "id" | "username" | "avatarUrl">;
+};
+
+type PostWithRelations = PostType & {
+  author?: Pick<User, "id" | "username" | "avatarUrl">;
+  comments?: CommentWithAuthor[];
+  likesCount: number;
+};
 
 const postsRouter = router({
   getPostsByUserId: publicProcedure
@@ -14,7 +23,7 @@ const postsRouter = router({
         userId: z.string(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input }): Promise<PostWithRelations[]> => {
       const posts = await Post.findAll({
         where: { userId: input.userId },
         attributes: {
@@ -33,28 +42,85 @@ const postsRouter = router({
           {
             model: User,
             as: "author",
-            attributes: ["id", "username", "avatarUrl"],
           },
         ],
       });
 
-      return posts.map((p) => {
-        const authorInstance = p.author;
-        const likes = p.likesCount;
-
-        const plainPost = p.get({ plain: true });
+      return posts.map((postInstance) => {
+        const plain = postInstance.get({ plain: true }) as any;
 
         return {
-          id: plainPost.id,
-          title: plainPost.title,
-          description: plainPost.description,
-          imageUrl: plainPost.imageUrl,
-          userId: plainPost.userId,
-          likesCount: Number(likes || 0),
-
-          author: authorInstance ? authorInstance.get({ plain: true }) : null,
-        };
+          ...plain,
+          likesCount: Number(plain.likesCount ?? 0),
+          author: plain.author
+            ? {
+                id: plain.author.id,
+                username: plain.author.username,
+                avatarUrl: plain.author.avatarUrl,
+              }
+            : null,
+        } as PostWithRelations;
       });
+    }),
+
+  getPostById: publicProcedure
+    .input(z.object({ postId: z.string() }))
+    .query(async ({ input }): Promise<PostWithRelations> => {
+      try {
+        const post = await Post.findByPk(input.postId, {
+          attributes: {
+          include: [
+            [
+              sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM Likes AS likes
+            WHERE likes.post_id = posts.id
+          )`),
+              "likesCount",
+            ],
+          ],
+        },
+          include: [
+            {
+              model: User,
+              as: "author",
+            },
+            {
+              model: Comment,
+              as: "comments",
+              attributes: ["id", "text", "createdAt"],
+              include: [
+                {
+                  model: User,
+                  as: "author",
+                  attributes: ["id", "username", "avatarUrl"],
+                },
+              ],
+              order: [["createdAt", "DESC"]],
+            },
+          ],
+        });
+        if (!post) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Post with this Id is absent.",
+          });
+        }
+
+        const result = post.get({ plain: true }) as PostWithRelations;
+
+        return {
+          ...result,
+          likesCount: Number(result.likesCount ?? 0),
+        };
+      } catch (error) {
+        console.log(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong on the server",
+          cause: error,
+        });
+      }
     }),
 });
 
