@@ -1,8 +1,41 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Message from "./Message";
+import { setUser } from "../reducers/user";
+import { makeMessage } from "../reducers/message";
+import { useEffect, useState } from "react";
+import { useAppDispatch } from "../store/hooks";
+import { trpc } from "../trpc";
 
 const AppLayout = () => {
+   const utils = trpc.useUtils();
+  const [isInitializing, setIsInitializing] = useState(true);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = localStorage.getItem('token')
+      if(token)
+      {
+        try {
+          const userData = await utils.users.me.fetch();
+          dispatch(setUser(userData))
+        } catch (error) {
+          dispatch(makeMessage("Token invalid or expired.", true))
+          localStorage.removeItem('token')
+        }
+      }
+      setIsInitializing(false)
+    }
+    loadUser();
+  }, []);
+
+  if(isInitializing)
+  {
+    return(
+      <p>Loading...</p>
+    )
+  }
   return (
     <div className="flex min-h-screen">
       <div className="grid-background"></div>

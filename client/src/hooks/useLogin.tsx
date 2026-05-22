@@ -1,7 +1,7 @@
 import type { LoginInfoType } from "../components/Login/LoginSchema";
 import { resetUser, setUser } from "../reducers/user";
 import { useAppDispatch } from "../store/hooks";
-import { trpc, trpcClient } from "../trpc";
+import { trpc } from "../trpc";
 
 const useLogin = () => {
   const loginMutation = trpc.login.login.useMutation();
@@ -23,6 +23,7 @@ const useLogin = () => {
   const logout = () => {
     localStorage.removeItem("token");
     dispatch(resetUser());
+    utils.users.me.invalidate();
   };
 
   return { login, logout };

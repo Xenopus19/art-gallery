@@ -11,7 +11,7 @@ const PostCard = ({ post }: PostCardProps) => {
   return (
     <Link to={`/post/${post.id}`}>
       <div className="max-w-52 shadow-xl p-2 rounded-2xl flex flex-col justify-between items-center">
-        <img className="mb-2 rounded-2xl" src={post.imageUrl} />
+        <img className=" w-50 h-50 object-cover mb-2 rounded-2xl" src={post.imageUrl} />
         <div className="max-w-2/3 px-1 text-center">
           <p className="font-bold wrap-break-word">
             {post.title} by {post.author ? post.author.username : "user"}

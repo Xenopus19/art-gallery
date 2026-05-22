@@ -1,18 +1,20 @@
-
 import "./App.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import MainPage from "./components/MainPage";
 import SignUp from "./components/SignUp";
-import { useState}  from "react";
+import { useEffect, useState } from "react";
 import { trpc, trpcClient } from "./trpc";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "./components/ui/tooltip";
 import Login from "./components/Login";
-import { Provider } from 'react-redux';
+import { Provider } from "react-redux";
 import { store } from "./store";
 import UserProfile from "./components/UserProfile";
 import PostPage from "./components/PostPage";
+import { useAppDispatch } from "./store/hooks";
+import { setUser } from "./reducers/user";
+import { makeMessage, setMessage } from "./reducers/message";
 
 const router = createBrowserRouter([
   {
@@ -47,13 +49,13 @@ function App() {
 
   return (
     <Provider store={store}>
-    <TooltipProvider>
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </trpc.Provider>
-    </TooltipProvider>
+      <TooltipProvider>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </trpc.Provider>
+      </TooltipProvider>
     </Provider>
   );
 }

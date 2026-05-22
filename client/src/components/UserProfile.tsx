@@ -34,7 +34,7 @@ const UserProfile = () => {
           <p>{userQuery.data.description}</p>
         </div>
       </div>
-      <div className="flex flex-row">
+      <div className="flex gap-3 flex-row">
         
         {postsQuery.data.map((p) => (
           <PostCard key={p.id} post={p}/>
