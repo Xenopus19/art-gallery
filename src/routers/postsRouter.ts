@@ -1,5 +1,5 @@
 import z, { includes } from "zod";
-import { publicProcedure, router } from "../utils/trpc.ts";
+import { protectedProcedure, publicProcedure, router } from "../utils/trpc.ts";
 import Post, { type PostType } from "../models/Post.ts";
 import { Comment, Like, User } from "../models/index.ts";
 import { sequelize } from "../utils/db.ts";
@@ -69,17 +69,17 @@ const postsRouter = router({
       try {
         const post = await Post.findByPk(input.postId, {
           attributes: {
-          include: [
-            [
-              sequelize.literal(`(
+            include: [
+              [
+                sequelize.literal(`(
             SELECT COUNT(*)
             FROM Likes AS likes
             WHERE likes.post_id = posts.id
           )`),
-              "likesCount",
+                "likesCount",
+              ],
             ],
-          ],
-        },
+          },
           include: [
             {
               model: User,
@@ -121,6 +121,16 @@ const postsRouter = router({
           cause: error,
         });
       }
+    }),
+
+  commentPost: protectedProcedure
+    .input(z.object({ text: z.string(), postId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      await Comment.create({
+        postId: input.postId,
+        userId: ctx.user.id,
+        text: input.text,
+      });
     }),
 });
 

@@ -4,6 +4,7 @@ import UserCard from "./UserCard";
 import Comment from "./Comment";
 import LikeButton from "./LikeButton";
 import { useAppSelector } from "../store/hooks";
+import CommentForm, { type CommentInfoType } from "./CommentForm";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,19 +18,22 @@ const PostPage = () => {
     { enabled: !!id && !!currentUser },
   );
   const likeMutation = trpc.like.toggleLike.useMutation();
+  const commentPostMutation = trpc.posts.commentPost.useMutation();
 
-  if (!postQuery.isSuccess) {
+  if (!postQuery.isSuccess || !!!id) {
     return <p>Loading...</p>;
   }
 
   const likePost = async () => {
-    if(id)
-    {
       await likeMutation.mutateAsync({postId: id})
       hasLiked.refetch();
       postQuery.refetch();
-    }
   };
+
+  const leaveComment = async (data: CommentInfoType) => {
+    await commentPostMutation.mutateAsync({postId: id, text: data.text});
+    postQuery.refetch();
+  }
 
   const post = postQuery.data;
   const author = post.author
@@ -59,6 +63,7 @@ const PostPage = () => {
           </div>
         </div>
       </div>
+      {currentUser.data && <CommentForm onSubmit={leaveComment}/>}
       {post.comments &&
         post.comments.map((c) => <Comment key={c.id} comment={c} />)}
     </div>
