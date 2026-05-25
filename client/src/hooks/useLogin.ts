@@ -1,7 +1,7 @@
-import type { LoginInfoType } from "../components/Login/LoginSchema";
-import { resetUser, setUser } from "../reducers/user";
-import { useAppDispatch } from "../store/hooks";
-import { trpc } from "../trpc";
+import type { LoginInfoType } from "../components/Login/LoginSchema.ts";
+import { resetUser, setUser } from "../reducers/user.ts";
+import { useAppDispatch } from "../store/hooks.ts";
+import { trpc } from "../trpc.ts";
 
 const useLogin = () => {
   const loginMutation = trpc.login.login.useMutation();

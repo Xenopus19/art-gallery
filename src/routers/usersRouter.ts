@@ -41,7 +41,7 @@ const userRouter = router({
           ...userData,
           passwordHash: hashedPassword,
         });
-        return newUser;
+        return newUser.get({plain: true});
       } catch (error) {
         
         if(error instanceof UniqueConstraintError)
@@ -53,21 +53,6 @@ const userRouter = router({
           throw new TRPCError({message: "Error creating user.", code: "INTERNAL_SERVER_ERROR"})
         }
       }
-    }),
-
-  getImageUploadUrl: publicProcedure
-    .input(
-      z.object({
-        fileName: z.string().max(200),
-        fileType: z.string().max(200),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const uniqueKey = `${uuidv4()}-${input.fileName.replace(/\s+/g, "_")}`;
-      const url = await getUploadUrl(uniqueKey, input.fileType);
-      console.log(url);
-      console.log(uniqueKey);
-      return { url, key: uniqueKey };
     }),
 
   me: protectedProcedure.query(async ({ ctx }) => {

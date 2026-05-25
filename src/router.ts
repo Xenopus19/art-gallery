@@ -1,3 +1,4 @@
+import imageRouter from './routers/imageRouter.ts';
 import likeRouter from './routers/likeRouter.ts';
 import loginRouter from './routers/loginRouter.ts';
 import postsRouter from './routers/postsRouter.ts';
@@ -11,7 +12,8 @@ export const appRouter = router({
   users: userRouter,
   login: loginRouter,
   posts: postsRouter,
-  like: likeRouter
+  like: likeRouter,
+  image: imageRouter
 });
 
 export type AppRouter = typeof appRouter;

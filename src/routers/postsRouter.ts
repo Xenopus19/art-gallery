@@ -5,6 +5,7 @@ import { Comment, Like, User } from "../models/index.ts";
 import { sequelize } from "../utils/db.ts";
 import { TRPCError } from "@trpc/server";
 import type { CommentType } from "../models/Comment.ts";
+import createPostSchema from "../schemas/createPost.ts";
 
 type CommentWithAuthor = CommentType & {
   author?: Pick<User, "id" | "username" | "avatarUrl">;
@@ -131,6 +132,21 @@ const postsRouter = router({
         userId: ctx.user.id,
         text: input.text,
       });
+    }),
+
+  createPost: protectedProcedure
+    .input(createPostSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const post = await Post.create({ ...input, userId: ctx.user.id });
+        return post;
+      } catch (error) {
+        console.error(`Error creating post: ${error}`)
+        throw new TRPCError({
+          message: "Error creating new post",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
     }),
 });
 
