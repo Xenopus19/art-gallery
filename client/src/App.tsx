@@ -15,6 +15,7 @@ import PostPage from "./components/PostPage";
 import { useAppDispatch } from "./store/hooks";
 import { setUser } from "./reducers/user";
 import { makeMessage, setMessage } from "./reducers/message";
+import CreatePost from "./components/CreatePost";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: `/post/:id`,
         element: <PostPage />,
+      },
+      {
+        path: `/createPost`,
+        element: <CreatePost />,
       },
     ],
   },

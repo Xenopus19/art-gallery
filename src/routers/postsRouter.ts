@@ -139,7 +139,7 @@ const postsRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const post = await Post.create({ ...input, userId: ctx.user.id });
-        return post;
+        return post.get({plain: true});
       } catch (error) {
         console.error(`Error creating post: ${error}`)
         throw new TRPCError({

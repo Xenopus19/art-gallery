@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Landmark, LogInIcon, LogOut, User } from "lucide-react";
+import { Landmark, LogInIcon, LogOut, Plus, User } from "lucide-react";
 import TooltipLinkIcon from "./TooltipLinkIcon";
 import { useAppSelector } from "../store/hooks";
 import useLogin from "../hooks/useLogin";
@@ -28,6 +28,11 @@ const Header = () => {
             icon={User}
             text={`Welcome, ${user.username}`}
             url={`/profile/${user.id}`}
+          />
+          <TooltipLinkIcon
+            icon={Plus}
+            text={`Create Post`}
+            url={`/createPost`}
           />
           <TooltipLinkIcon
             icon={LogOut}
