@@ -1,15 +1,21 @@
 import { useParams } from "react-router-dom";
 import { trpc } from "../trpc";
 import PostCard from "./PostCard";
+import DescriptionChange, { type DescriptionChangeInfoType } from "./DescriptionChange";
+import { useAppSelector } from "../store/hooks";
 
 const UserProfile = () => {
   const { id } = useParams<{ id: string }>();
+  const currentUser = useAppSelector((state) => state.user.data)
+  const descriptionChangeMutation = trpc.users.changeUserDescription.useMutation();
+
   const userQuery = trpc.users.getUserById.useQuery(
     { id: id as string },
     {
       enabled: !!id,
     },
   );
+  
   const postsQuery = trpc.posts.getPostsByUserId.useQuery(
     { userId: id as string },
     {
@@ -20,6 +26,13 @@ const UserProfile = () => {
   if (!id) return <p>User not found</p>;
 
   if (!userQuery.isSuccess || !postsQuery.isSuccess) return <p>Loading...</p>;
+
+  const isPageOwner = currentUser?.id === id;
+
+  const changeProfileDescription = async (data: DescriptionChangeInfoType) => {
+    await descriptionChangeMutation.mutateAsync(data);
+    await userQuery.refetch();
+  }
 
   return (
     <div className="flex flex-col gap-10 justify-center ">
@@ -32,7 +45,9 @@ const UserProfile = () => {
           />
           <p className="font-bold text-xl">{userQuery.data.username}</p>
           <p>{userQuery.data.description}</p>
+          {isPageOwner && <DescriptionChange onSubmit={changeProfileDescription}/>}
         </div>
+        
       </div>
       <div className="flex gap-3 flex-row">
         

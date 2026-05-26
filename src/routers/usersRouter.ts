@@ -41,16 +41,17 @@ const userRouter = router({
           ...userData,
           passwordHash: hashedPassword,
         });
-        return newUser.get({plain: true});
+        return newUser.get({ plain: true });
       } catch (error) {
-        
-        if(error instanceof UniqueConstraintError)
-        {
-          const message = error.errors[0]?.message || "User with this name already exists.";
-          throw new TRPCError({message: message, code: "CONFLICT"})
-        }
-        else{
-          throw new TRPCError({message: "Error creating user.", code: "INTERNAL_SERVER_ERROR"})
+        if (error instanceof UniqueConstraintError) {
+          const message =
+            error.errors[0]?.message || "User with this name already exists.";
+          throw new TRPCError({ message: message, code: "CONFLICT" });
+        } else {
+          throw new TRPCError({
+            message: "Error creating user.",
+            code: "INTERNAL_SERVER_ERROR",
+          });
         }
       }
     }),
@@ -58,9 +59,43 @@ const userRouter = router({
   me: protectedProcedure.query(async ({ ctx }) => {
     return ctx.user;
   }),
-  //changeUserDescription: publicProcedure.input(createUserSchema.pick({ description: true })).mutation(async () => {
+  changeUserDescription: protectedProcedure
+    .input(createUserSchema.pick({ description: true }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const [affectedCount, updatedUser] = await User.update(
+          {
+            description: input.description,
+          },
+          {
+            where: {
+              id: ctx.user.id,
+            },
+            returning: true
+          },
+        );
 
-  //})
+         const userInDb = updatedUser[0];
+
+        if (!userInDb) {
+          throw new TRPCError({
+            message: "User is absent from database.",
+            code: "NOT_FOUND",
+          });
+        }
+
+        return userInDb.get({ plain: true });
+      } catch (error) {
+        console.error("Error updating user description:", error);
+
+        if (error instanceof TRPCError) throw error;
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong on the server",
+        });
+      }
+    }),
 });
 
 export default userRouter;
