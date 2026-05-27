@@ -44,7 +44,7 @@ const PostPage = () => {
     <div className="flex flex-col gap-4">
       <div>
         <div className=" shadow-xl p-4 rounded-2xl flex flex-row justify-between items-center">
-          <img src={post.imageUrl} />
+          <img src={post.imageUrl} className="max-w-2/3 max-h-2/3" />
           <div>
             <UserCard
               username={author.username}
