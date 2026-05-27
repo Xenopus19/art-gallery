@@ -6,6 +6,7 @@ import { sequelize } from "../utils/db.ts";
 import { TRPCError } from "@trpc/server";
 import type { CommentType } from "../models/Comment.ts";
 import createPostSchema from "../schemas/createPost.ts";
+import { Op } from "sequelize";
 
 type CommentWithAuthor = CommentType & {
   author?: Pick<User, "id" | "username" | "avatarUrl">;
@@ -139,13 +140,42 @@ const postsRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         const post = await Post.create({ ...input, userId: ctx.user.id });
-        return post.get({plain: true});
+        return post.get({ plain: true });
       } catch (error) {
-        console.error(`Error creating post: ${error}`)
+        console.error(`Error creating post: ${error}`);
         throw new TRPCError({
           message: "Error creating new post",
           code: "INTERNAL_SERVER_ERROR",
         });
+      }
+    }),
+
+  getInfinitePosts: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(5).max(100).default(10),
+        cursor: z.string().nullish(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const {limit, cursor} = input;
+      
+      const posts = await Post.findAll({
+        where: cursor ? {id: {[Op.lt]: cursor} } : {},
+        order: [['id', 'DESC']],
+        limit: limit + 1,
+      })
+
+      let newCursor: string | undefined = undefined;
+
+      if(posts.length > limit)
+      {
+        newCursor = posts.pop()?.id;
+      }
+
+      return {
+        posts,
+        newCursor
       }
     }),
 });

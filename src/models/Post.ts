@@ -8,6 +8,7 @@ import type {
 import { sequelize } from "../utils/db.ts";
 import type { User } from "./index.ts";
 import type { CommentType } from "./Comment.ts";
+import { uuidv7 } from "uuidv7";
 
 class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {
   declare id: CreationOptional<string>;
@@ -23,7 +24,6 @@ Post.init(
   {
     id: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
     },
@@ -52,6 +52,7 @@ Post.init(
       type: DataTypes.TEXT,
       allowNull: false,
       unique: false,
+      
     },
   },
   {
@@ -59,6 +60,13 @@ Post.init(
     underscored: true,
     modelName: "posts",
     timestamps: false,
+    hooks: {
+    beforeValidate: (post) => {
+      if (!post.id) {
+        post.id = uuidv7(); 
+      }
+    },
+  },
   },
 );
 
