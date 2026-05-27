@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import type { RouterOutput } from "../trpc";
 
-type PostWithAuthorType = RouterOutput["posts"]["getPostsByUserId"][number];
+export type PostWithAuthorType = RouterOutput["posts"]["getPostsByUserId"][number];
 
 interface PostCardProps {
   post: PostWithAuthorType;

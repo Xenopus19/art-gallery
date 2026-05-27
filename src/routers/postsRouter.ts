@@ -12,11 +12,16 @@ type CommentWithAuthor = CommentType & {
   author?: Pick<User, "id" | "username" | "avatarUrl">;
 };
 
-type PostWithRelations = PostType & {
+type SimplePost = PostType & {
   author?: Pick<User, "id" | "username" | "avatarUrl">;
+}
+
+type PostWithRelations = SimplePost & {
   comments?: CommentWithAuthor[];
   likesCount: number;
 };
+
+
 
 const postsRouter = router({
   getPostsByUserId: publicProcedure
@@ -25,21 +30,9 @@ const postsRouter = router({
         userId: z.string(),
       }),
     )
-    .query(async ({ input }): Promise<PostWithRelations[]> => {
+    .query(async ({ input }): Promise<SimplePost[]> => {
       const posts = await Post.findAll({
         where: { userId: input.userId },
-        attributes: {
-          include: [
-            [
-              sequelize.literal(`(
-            SELECT COUNT(*)
-            FROM Likes AS likes
-            WHERE likes.post_id = posts.id
-          )`),
-              "likesCount",
-            ],
-          ],
-        },
         include: [
           {
             model: User,
@@ -53,7 +46,6 @@ const postsRouter = router({
 
         return {
           ...plain,
-          likesCount: Number(plain.likesCount ?? 0),
           author: plain.author
             ? {
                 id: plain.author.id,
@@ -61,7 +53,7 @@ const postsRouter = router({
                 avatarUrl: plain.author.avatarUrl,
               }
             : null,
-        } as PostWithRelations;
+        } as SimplePost;
       });
     }),
 
@@ -164,6 +156,10 @@ const postsRouter = router({
         where: cursor ? {id: {[Op.lt]: cursor} } : {},
         order: [['id', 'DESC']],
         limit: limit + 1,
+        include: {
+          model: User,
+          as: 'author'
+        }
       })
 
       let newCursor: string | undefined = undefined;
@@ -173,8 +169,23 @@ const postsRouter = router({
         newCursor = posts.pop()?.id;
       }
 
+      const simplePosts: SimplePost[] = posts.map((postInstance) => {
+        const plain = postInstance.get({ plain: true }) as any;
+
+        return {
+          ...plain,
+          author: plain.author
+            ? {
+                id: plain.author.id,
+                username: plain.author.username,
+                avatarUrl: plain.author.avatarUrl,
+              }
+            : null,
+        };
+      });
+
       return {
-        posts,
+        posts: simplePosts,
         newCursor
       }
     }),

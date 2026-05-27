@@ -3,6 +3,7 @@ import { trpc } from "../trpc";
 import PostCard from "./PostCard";
 import DescriptionChange, { type DescriptionChangeInfoType } from "./DescriptionChange";
 import { useAppSelector } from "../store/hooks";
+import PostList from "./PostList";
 
 const UserProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -50,10 +51,7 @@ const UserProfile = () => {
         
       </div>
       <div className="flex gap-3 flex-row">
-        
-        {postsQuery.data.map((p) => (
-          <PostCard key={p.id} post={p}/>
-        ))}
+        <PostList posts={postsQuery.data}/>
       </div>
     </div>
   );
