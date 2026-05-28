@@ -14,14 +14,12 @@ type CommentWithAuthor = CommentType & {
 
 type SimplePost = PostType & {
   author?: Pick<User, "id" | "username" | "avatarUrl">;
-}
+};
 
 type PostWithRelations = SimplePost & {
   comments?: CommentWithAuthor[];
   likesCount: number;
 };
-
-
 
 const postsRouter = router({
   getPostsByUserId: publicProcedure
@@ -150,22 +148,21 @@ const postsRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const {limit, cursor} = input;
-      
+      const { limit, cursor } = input;
+
       const posts = await Post.findAll({
-        where: cursor ? {id: {[Op.lt]: cursor} } : {},
-        order: [['id', 'DESC']],
+        where: cursor ? { id: { [Op.lt]: cursor } } : {},
+        order: [["id", "DESC"]],
         limit: limit + 1,
         include: {
           model: User,
-          as: 'author'
-        }
-      })
+          as: "author",
+        },
+      });
 
       let newCursor: string | undefined = undefined;
 
-      if(posts.length > limit)
-      {
+      if (posts.length > limit) {
         newCursor = posts.pop()?.id;
       }
 
@@ -186,7 +183,51 @@ const postsRouter = router({
 
       return {
         posts: simplePosts,
-        newCursor
+        newCursor,
+      };
+    }),
+
+  deletePost: protectedProcedure
+    .input(z.object({ postId: z.string() }))
+    .mutation(async ({ctx,input}) => {
+      try {
+        const post = await Post.findByPk(input.postId, {
+          include: {
+            model: User,
+            as: 'author',
+            attributes: ['id']
+          }
+        })
+        if(!post)
+        {
+          throw new TRPCError({
+          message: "Post is absent",
+          code: 'NOT_FOUND',
+        });
+        }
+        const isPostOwner = post.author?.id === ctx.user.id;
+
+        if(!isPostOwner){
+          throw new TRPCError({
+          message: "User is not permitted to delete the post",
+          code: 'FORBIDDEN',
+        });
+      }
+      await post.destroy();
+      return {
+        message: "Post successfully deleted."
+      }
+      } catch (error) {
+        console.error(`Error deleting post: ${error}`);
+
+        if(error instanceof TRPCError)
+        {
+          throw error
+        }
+        throw new TRPCError({
+          message: "Error deleting post",
+          code: "INTERNAL_SERVER_ERROR",
+        });
       }
     }),
 });
