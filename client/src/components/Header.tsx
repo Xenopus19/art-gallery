@@ -1,18 +1,16 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Landmark, LogInIcon, LogOut, Plus, User } from "lucide-react";
 import TooltipLinkIcon from "./TooltipLinkIcon";
 import { useAppSelector } from "../store/hooks";
 import useLogin from "../hooks/useLogin";
 
 const Header = () => {
-  const navigate = useNavigate();
-
   const user = useAppSelector((state) => state.user.data);
-  const {logout} = useLogin();
+  const { logout } = useLogin();
 
   const handleLogout = () => {
     logout();
-  }
+  };
 
   return (
     <div className="relative z-20 shadow-[0_0_8px_0_rgba(0,0,0,0.4)] w-15 bg-amber-500 flex flex-col items-center gap-5 px-5">

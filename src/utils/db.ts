@@ -11,10 +11,7 @@ export const connectToDatabase = async () => {
   try {
     await sequelize.authenticate()
     await runMigrations()
-    console.log('connected to the database')
-  } catch (err) {
-    console.log('failed to connect to the database')
-    console.log(err)
+  } catch  {
     return process.exit(1)
   }
 }
@@ -42,8 +39,5 @@ export const runMigrations = async () => {
     logger: console,
   })
   
-  const migrations = await migrator.up()
-  console.log('Migrations up to date', {
-    files: migrations.map((mig) => mig.name),
-  })
+  await migrator.up()
 }

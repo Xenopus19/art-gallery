@@ -27,7 +27,7 @@ const PostPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  if (!postQuery.isSuccess || !!!id) {
+  if (!postQuery.isSuccess || !id) {
     return <p>Loading...</p>;
   }
 

@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction, type UnknownAction } from "@reduxjs/toolkit";
 
 interface MessageState {
   message: string;
@@ -28,7 +28,7 @@ const messageSlice = createSlice({
 export const { setMessage, resetMessage } = messageSlice.actions;
 
 export const makeMessage = (message: string, isError = false, details = "") => {
-  return (dispatch: any) => {
+  return (dispatch: (action: UnknownAction) => void) => {
     dispatch(setMessage({ message, details, isError }));
 
     setTimeout(() => {

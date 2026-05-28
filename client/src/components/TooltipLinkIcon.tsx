@@ -1,4 +1,4 @@
-import { Icon, Settings, type LucideIcon } from "lucide-react";
+import {type LucideIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Link } from "react-router-dom";

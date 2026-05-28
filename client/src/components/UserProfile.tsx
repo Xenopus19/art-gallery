@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { trpc } from "../trpc";
-import PostCard from "./PostCard";
 import DescriptionChange, { type DescriptionChangeInfoType } from "./DescriptionChange";
 import { useAppSelector } from "../store/hooks";
 import PostList from "./PostList";

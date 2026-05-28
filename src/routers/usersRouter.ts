@@ -2,10 +2,8 @@ import { TRPCError } from "@trpc/server";
 import User from "../models/User.ts";
 import { router, publicProcedure, protectedProcedure } from "../utils/trpc.ts";
 import { z } from "zod";
-import { v4 as uuidv4 } from "uuid";
 import createUserSchema from "../schemas/createUser.ts";
 import bcrypt from "bcrypt";
-import { getUploadUrl } from "../utils/s3.ts";
 import { UniqueConstraintError } from "sequelize";
 
 const userRouter = router({
@@ -36,7 +34,7 @@ const userRouter = router({
     .mutation(async ({ input }) => {
       try {
         const hashedPassword: string = await bcrypt.hash(input.password, 10);
-        const { password: _, ...userData } = input;
+        const { password: _password, ...userData } = input;
         const newUser = await User.create({
           ...userData,
           passwordHash: hashedPassword,
@@ -63,7 +61,7 @@ const userRouter = router({
     .input(createUserSchema.pick({ description: true }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const [affectedCount, updatedUser] = await User.update(
+        const [, updatedUser] = await User.update(
           {
             description: input.description,
           },
@@ -86,8 +84,6 @@ const userRouter = router({
 
         return userInDb.get({ plain: true });
       } catch (error) {
-        console.error("Error updating user description:", error);
-
         if (error instanceof TRPCError) throw error;
 
         throw new TRPCError({

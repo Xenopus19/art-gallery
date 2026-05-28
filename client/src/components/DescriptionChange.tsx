@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Edit } from "lucide-react";
 import { useForm } from "react-hook-form";
-import signUpSchema from "./SignUp/SignUpSchema";
+import { descriptionChangeSchema } from "./SignUp/SignUpSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldLabel } from "./ui/field";
 import { Textarea } from "./ui/textarea";
@@ -11,8 +11,6 @@ import type z from "zod";
 interface DescriptionChangeProps{
     onSubmit: (data: DescriptionChangeInfoType) => void
 }
-
-export const descriptionChangeSchema = signUpSchema.pick({description: true})
 
 export type DescriptionChangeInfoType = z.infer<typeof descriptionChangeSchema>;
 

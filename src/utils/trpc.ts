@@ -8,17 +8,14 @@ import Like from '../models/Like.ts';
 
 export const createContext = ({
   req,
-  res,
 }: trpcExpress.CreateExpressContextOptions) => {
   const authorization = req.headers.authorization;
   let user: TokenUser | null = null;
 
   if (authorization?.toLowerCase().startsWith("bearer ")) {
-    try {
       const token = authorization.substring(7);
       user = jwt.verify(token, JWT_SECRET) as TokenUser;
-    } catch {
-    }
+
   }
 
   return {

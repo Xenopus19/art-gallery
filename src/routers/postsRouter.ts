@@ -1,7 +1,7 @@
-import z, { includes } from "zod";
+import z from "zod";
 import { protectedProcedure, publicProcedure, router } from "../utils/trpc.ts";
 import Post, { type PostType } from "../models/Post.ts";
-import { Comment, Like, User } from "../models/index.ts";
+import { Comment, User } from "../models/index.ts";
 import { sequelize } from "../utils/db.ts";
 import { TRPCError } from "@trpc/server";
 import type { CommentType } from "../models/Comment.ts";
@@ -40,7 +40,9 @@ const postsRouter = router({
       });
 
       return posts.map((postInstance) => {
-        const plain = postInstance.get({ plain: true }) as any;
+        const plain = postInstance.get({ plain: true }) as PostType & {
+          author?: User;
+        };
 
         return {
           ...plain,
@@ -106,7 +108,6 @@ const postsRouter = router({
           likesCount: Number(result.likesCount ?? 0),
         };
       } catch (error) {
-        console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong on the server",
@@ -131,8 +132,7 @@ const postsRouter = router({
       try {
         const post = await Post.create({ ...input, userId: ctx.user.id });
         return post.get({ plain: true });
-      } catch (error) {
-        console.error(`Error creating post: ${error}`);
+      } catch {
         throw new TRPCError({
           message: "Error creating new post",
           code: "INTERNAL_SERVER_ERROR",
@@ -157,6 +157,7 @@ const postsRouter = router({
         include: {
           model: User,
           as: "author",
+          attributes: ["id", "username", "avatarUrl"],
         },
       });
 
@@ -166,20 +167,9 @@ const postsRouter = router({
         newCursor = posts.pop()?.id;
       }
 
-      const simplePosts: SimplePost[] = posts.map((postInstance) => {
-        const plain = postInstance.get({ plain: true }) as any;
-
-        return {
-          ...plain,
-          author: plain.author
-            ? {
-                id: plain.author.id,
-                username: plain.author.username,
-                avatarUrl: plain.author.avatarUrl,
-              }
-            : null,
-        };
-      });
+      const simplePosts = posts.map((postInstance) =>
+        postInstance.get({ plain: true }),
+      ) as SimplePost[];
 
       return {
         posts: simplePosts,
@@ -189,40 +179,37 @@ const postsRouter = router({
 
   deletePost: protectedProcedure
     .input(z.object({ postId: z.string() }))
-    .mutation(async ({ctx,input}) => {
+    .mutation(async ({ ctx, input }) => {
       try {
         const post = await Post.findByPk(input.postId, {
           include: {
             model: User,
-            as: 'author',
-            attributes: ['id']
-          }
-        })
-        if(!post)
-        {
-          throw new TRPCError({
-          message: "Post is absent",
-          code: 'NOT_FOUND',
+            as: "author",
+            attributes: ["id"],
+          },
         });
+        if (!post) {
+          throw new TRPCError({
+            message: "Post is absent",
+            code: "NOT_FOUND",
+          });
         }
         const isPostOwner = post.author?.id === ctx.user.id;
 
-        if(!isPostOwner){
+        if (!isPostOwner) {
           throw new TRPCError({
-          message: "User is not permitted to delete the post",
-          code: 'FORBIDDEN',
-        });
-      }
-      await post.destroy();
-      return {
-        message: "Post successfully deleted."
-      }
+            message: "User is not permitted to delete the post",
+            code: "FORBIDDEN",
+          });
+        }
+        await post.destroy();
+        return {
+          message: "Post successfully deleted.",
+        };
       } catch (error) {
-        console.error(`Error deleting post: ${error}`);
-
-        if(error instanceof TRPCError)
-        {
-          throw error
+      
+        if (error instanceof TRPCError) {
+          throw error;
         }
         throw new TRPCError({
           message: "Error deleting post",

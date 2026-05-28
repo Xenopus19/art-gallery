@@ -1,4 +1,3 @@
-import { useInView } from "react-intersection-observer";
 import { trpc } from "../trpc";
 import { useEffect, useRef } from "react";
 import PostList from "./PostList";
@@ -8,7 +7,6 @@ const MainPage = () => {
 
   const {
     data,
-    error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

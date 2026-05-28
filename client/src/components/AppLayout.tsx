@@ -20,7 +20,7 @@ const AppLayout = () => {
         try {
           const userData = await utils.users.me.fetch();
           dispatch(setUser(userData))
-        } catch (error) {
+        } catch {
           dispatch(makeMessage("Token invalid or expired.", true))
           localStorage.removeItem('token')
         }
@@ -28,7 +28,7 @@ const AppLayout = () => {
       setIsInitializing(false)
     }
     loadUser();
-  }, []);
+  }, [dispatch, utils.users.me]);
 
   if(isInitializing)
   {
