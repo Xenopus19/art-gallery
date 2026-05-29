@@ -3,7 +3,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import MainPage from "./components/MainPage";
 import SignUp from "./components/SignUp";
-import {  useState } from "react";
+import { useState } from "react";
 import { trpc, trpcClient } from "./trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "./components/ui/tooltip";
@@ -13,6 +13,7 @@ import { store } from "./store";
 import UserProfile from "./components/UserProfile";
 import PostPage from "./components/PostPage";
 import CreatePost from "./components/CreatePost";
+import LikedPostsPage from "./components/LikedPostsPage";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: `/createPost`,
         element: <CreatePost />,
+      },
+      {
+        path: `/likedPosts`,
+        element: <LikedPostsPage />,
       },
     ],
   },

@@ -1,7 +1,7 @@
 import z from "zod";
 import { protectedProcedure, publicProcedure, router } from "../utils/trpc.ts";
 import Post, { type PostType } from "../models/Post.ts";
-import { Comment, User } from "../models/index.ts";
+import { Comment, Like, User } from "../models/index.ts";
 import { sequelize } from "../utils/db.ts";
 import { TRPCError } from "@trpc/server";
 import type { CommentType } from "../models/Comment.ts";
@@ -37,6 +37,7 @@ const postsRouter = router({
             as: "author",
           },
         ],
+        order: [["id", "DESC"]],
       });
 
       return posts.map((postInstance) => {
@@ -207,7 +208,6 @@ const postsRouter = router({
           message: "Post successfully deleted.",
         };
       } catch (error) {
-      
         if (error instanceof TRPCError) {
           throw error;
         }
@@ -217,6 +217,32 @@ const postsRouter = router({
         });
       }
     }),
+
+  getPostsLikedByUser: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.user.id;
+
+    const likesWithPosts = await Like.findAll({
+      where: {
+        userId,
+      },
+      include: {
+        model: Post,
+        as: "post",
+        include: [
+          {
+            model: User,
+            as: "author",
+            attributes: ["id", "username", "avatarUrl"],
+          },
+        ],
+        order: [["id", "DESC"]],
+      },
+    });
+
+    const posts = likesWithPosts.map(like => like.post.get({plain: true}) as SimplePost);
+
+    return posts;
+  }),
 });
 
 export default postsRouter;

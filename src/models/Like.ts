@@ -3,13 +3,16 @@ import type {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
+  NonAttribute,
 } from "sequelize";
 import { sequelize } from "../utils/db.ts";
+import type { Post } from "./index.ts";
 
 class Like extends Model<InferAttributes<Like>, InferCreationAttributes<Like>> {
   declare id: CreationOptional<string>;
   declare userId: string;
   declare postId: string;
+  declare post: NonAttribute<Post>;
 }
 Like.init(
   {

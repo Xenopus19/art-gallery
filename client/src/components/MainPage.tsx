@@ -40,7 +40,7 @@ const MainPage = () => {
   const flatPosts = data.pages.flatMap((page) => page.posts);
   return (
     <>
-      <p className="text-center font-extrabold text-2xl">
+      <p className="bg-gradient-to-b from-black to-amber-700 bg-clip-text text-transparent text-center font-extrabold text-3xl">
         Welcome to the art world
       </p>
       <PostList posts={flatPosts} />
