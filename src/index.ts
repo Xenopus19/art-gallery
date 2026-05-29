@@ -1,6 +1,6 @@
-import app from "./src/app.ts";
-import { PORT } from "./src/utils/config.ts";
-import { connectToDatabase } from "./src/utils/db.ts";
+import app from "./app.ts";
+import { PORT } from "./utils/config.ts";
+import { connectToDatabase } from "./utils/db.ts";
 
 const connectToDB = async () => {
   try {

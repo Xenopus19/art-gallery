@@ -4,11 +4,15 @@ import { appRouter } from './router.ts';
 
 import cors from 'cors'
 import { createContext } from './utils/trpc.ts';
+import path from 'path';
 
 
 const app = express();
 
 app.use(cors());
+
+const staticPath = path.join(process.cwd(), 'client', 'dist')
+app.use(express.static(staticPath));
 
 app.use(
   '/trpc',
@@ -17,5 +21,9 @@ app.use(
     createContext: createContext,
   }),
 );
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(staticPath, 'index.html'));
+});
 
 export default app;
