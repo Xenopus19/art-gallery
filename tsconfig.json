@@ -22,7 +22,7 @@
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
 
     // Style Options
     // "noImplicitReturns": true,
@@ -40,5 +40,12 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+    
+  },
+  "exclude": [
+    "node_modules",  
+    "client", 
+    "dist"
+  ]
+  
 }

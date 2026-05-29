@@ -1,7 +1,7 @@
-import { hasLikedProcedure, router } from "../utils/trpc.ts";
+import { hasLikedProcedure, router } from "../utils/trpc.js";
 import { TRPCError } from "@trpc/server";
 
-import Like from "../models/Like.ts";
+import Like from "../models/Like.js";
 
 const likeRouter = router({
   hasLiked: hasLikedProcedure.query(async ({ ctx }) => {

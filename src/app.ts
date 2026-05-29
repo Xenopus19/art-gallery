@@ -1,9 +1,9 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import express from 'express';
-import { appRouter } from './router.ts';
+import { appRouter } from './router.js';
 
 import cors from 'cors'
-import { createContext } from './utils/trpc.ts';
+import { createContext } from './utils/trpc.js';
 import path from 'path';
 
 
@@ -22,7 +22,7 @@ app.use(
   }),
 );
 
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(staticPath, 'index.html'));
 });
 

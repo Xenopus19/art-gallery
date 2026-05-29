@@ -5,8 +5,8 @@ import type {
   CreationOptional,
   NonAttribute,
 } from "sequelize";
-import { sequelize } from "../utils/db.ts";
-import type { Post } from "./index.ts";
+import { sequelize } from "../utils/db.js";
+import type { Post } from "./index.js";
 
 class Like extends Model<InferAttributes<Like>, InferCreationAttributes<Like>> {
   declare id: CreationOptional<string>;

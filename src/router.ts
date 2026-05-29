@@ -1,9 +1,9 @@
-import imageRouter from './routers/imageRouter.ts';
-import likeRouter from './routers/likeRouter.ts';
-import loginRouter from './routers/loginRouter.ts';
-import postsRouter from './routers/postsRouter.ts';
-import userRouter from './routers/usersRouter.ts';
-import { publicProcedure, router } from './utils/trpc.ts';
+import imageRouter from './routers/imageRouter.js';
+import likeRouter from './routers/likeRouter.js';
+import loginRouter from './routers/loginRouter.js';
+import postsRouter from './routers/postsRouter.js';
+import userRouter from './routers/usersRouter.js';
+import { publicProcedure, router } from './utils/trpc.js';
 
 export const appRouter = router({
   hello: publicProcedure.query(() => {

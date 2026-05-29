@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import User from "../models/User.ts";
-import { router, publicProcedure, protectedProcedure } from "../utils/trpc.ts";
+import User from "../models/User.js";
+import { router, publicProcedure, protectedProcedure } from "../utils/trpc.js";
 import { z } from "zod";
-import createUserSchema from "../schemas/createUser.ts";
+import createUserSchema from "../schemas/createUser.js";
 import bcrypt from "bcrypt";
 import { UniqueConstraintError } from "sequelize";
 

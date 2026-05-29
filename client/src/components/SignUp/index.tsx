@@ -25,8 +25,9 @@ const SignUp = () => {
     try {
       setIsLoading(true);
       const { avatar, ...requiredData } = data;
+      const avatarFile = avatar[0];
       
-      const key = await uploadImage(avatar)
+      const key = await uploadImage(avatarFile)
 
       const user = await signUpMutation.mutateAsync({
         ...requiredData,

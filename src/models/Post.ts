@@ -5,9 +5,9 @@ import type {
   CreationOptional,
   NonAttribute,
 } from "sequelize";
-import { sequelize } from "../utils/db.ts";
-import type { User } from "./index.ts";
-import type { CommentType } from "./Comment.ts";
+import { sequelize } from "../utils/db.js";
+import type { User } from "./index.js";
+import type { CommentType } from "./Comment.js";
 import { uuidv7 } from "uuidv7";
 
 class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>> {

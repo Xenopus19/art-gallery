@@ -1,7 +1,7 @@
-import Comment from "./Comment.ts";
-import Like from "./Like.ts";
-import Post from "./Post.ts";
-import User from "./User.ts";
+import Comment from "./Comment.js";
+import Like from "./Like.js";
+import Post from "./Post.js";
+import User from "./User.js";
 
 Post.belongsTo(User, { foreignKey: 'userId', as: 'author' });
 User.hasMany(Post, { foreignKey: 'userId', as: 'posts' });

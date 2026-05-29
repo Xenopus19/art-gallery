@@ -4,7 +4,7 @@ import type {
   InferCreationAttributes,
   CreationOptional,
 } from "sequelize";
-import {sequelize} from "../utils/db.ts";
+import {sequelize} from "../utils/db.js";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<string>;

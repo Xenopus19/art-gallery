@@ -7,8 +7,7 @@ const signUpSchema = z.object({
   avatar: z
     .custom<FileList>()
     .refine((files) => files?.length === 1, "Need one file")
-    .transform((files) => files[0])
-    .refine((file) => file.size <= 5 * 1024 * 1024, "Max size 5MB"),
+    .refine((files) => files?.[0]?.size <= 5 * 1024 * 1024, "Max size 5MB"),
 });
 
 export const descriptionChangeSchema = signUpSchema.pick({ description: true });

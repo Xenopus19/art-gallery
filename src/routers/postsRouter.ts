@@ -1,11 +1,11 @@
 import z from "zod";
-import { protectedProcedure, publicProcedure, router } from "../utils/trpc.ts";
-import Post, { type PostType } from "../models/Post.ts";
-import { Comment, Like, User } from "../models/index.ts";
-import { sequelize } from "../utils/db.ts";
+import { protectedProcedure, publicProcedure, router } from "../utils/trpc.js";
+import Post, { type PostType } from "../models/Post.js";
+import { Comment, Like, User } from "../models/index.js";
+import { sequelize } from "../utils/db.js"
 import { TRPCError } from "@trpc/server";
-import type { CommentType } from "../models/Comment.ts";
-import createPostSchema from "../schemas/createPost.ts";
+import type { CommentType } from "../models/Comment.js";
+import createPostSchema from "../schemas/createPost.js";
 import { Op } from "sequelize";
 
 type CommentWithAuthor = CommentType & {

@@ -1,10 +1,10 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import type { TokenUser } from '../routers/loginRouter.ts';
-import { JWT_SECRET } from './config.ts';
+import { JWT_SECRET } from './config.js';
 import jwt from 'jsonwebtoken'
 import z from 'zod';
-import Like from '../models/Like.ts';
+import Like from '../models/Like.js';
 
 export const createContext = ({
   req,

@@ -24,8 +24,9 @@ const CreatePost = () => {
       setIsLoading(true);
 
       const { image, ...requiredData } = data;
+      const imageFile = image[0];
 
-      const key = await uploadImage(image)
+      const key = await uploadImage(imageFile)
       const imageUrl = `${import.meta.env.VITE_BUCKET_URL}/${key}`
       console.log(imageUrl)
       const post = await createPostMutation.mutateAsync({...requiredData, imageUrl})

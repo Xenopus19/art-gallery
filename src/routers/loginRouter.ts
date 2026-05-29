@@ -1,11 +1,11 @@
 import z from "zod";
-import createUserSchema from "../schemas/createUser.ts";
-import { publicProcedure, router } from "../utils/trpc.ts";
-import User from "../models/User.ts";
+import createUserSchema from "../schemas/createUser.js";
+import { publicProcedure, router } from "../utils/trpc.js";
+import User from "../models/User.js";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../utils/config.ts";
+import { JWT_SECRET } from "../utils/config.js";
 
 export interface TokenUser { 
   username: string,

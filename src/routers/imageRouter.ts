@@ -1,7 +1,7 @@
-import { router, publicProcedure} from "../utils/trpc.ts";
+import { router, publicProcedure} from "../utils/trpc.js";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
-import { getUploadUrl } from "../utils/s3.ts";
+import { getUploadUrl } from "../utils/s3.js";
 
 
 const imageRouter = router({
