@@ -10,7 +10,8 @@
     "dev:client": "npm run dev --prefix client",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "lint": "eslint . --ext .ts",
-    "build": "npx tsc && npm run build --prefix client"
+    "build": "npx tsc && npm run build --prefix client",
+    "install:all": "npm install && npm install --prefix client"
   },
   "keywords": [],
   "author": "",
